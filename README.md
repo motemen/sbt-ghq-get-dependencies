@@ -1,0 +1,1 @@
+# sbt-ghq-get-dependencies
