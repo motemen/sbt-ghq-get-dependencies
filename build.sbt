@@ -2,7 +2,9 @@ sbtPlugin := true
 
 name := "sbt-ghq-get-dependencies"
 
-version := "0.1.0"
+version := {
+  ("git describe --tags --match v* --dirty=-SNAPSHOT" !!) trim
+}
 
 description := """An sbt plugin to clone dependency repositories using "ghq get""""
 

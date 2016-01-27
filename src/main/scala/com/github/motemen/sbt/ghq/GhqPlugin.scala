@@ -14,16 +14,25 @@ object GhqPlugin extends AutoPlugin {
     """Download dependencies using "ghq get"."""
   )
 
+  lazy val ghqFilterModule = SettingKey[ModuleID => Boolean](
+    "ghq-filter-module",
+    "A function to filter which modules are to be downloaded"
+  )
+
   lazy val settings = Seq(
-    ghqGetDependencies <<= (ivyPaths, libraryDependencies, streams) map {
-      (ivyPaths, libraryDependencies, s) =>
+    ghqGetDependencies <<= (ghqFilterModule, ivyPaths, libraryDependencies, streams) map {
+      (filterModule, ivyPaths, libraryDependencies, s) =>
         new IvyCache(ivyPaths.ivyHome).withDefaultCache(None, s.log) {
           cache =>
-            libraryDependencies.foreach {
+            libraryDependencies.filter(filterModule).foreach {
               m =>
                 GhqAction.downloadModule(cache, m, s.log)
             }
         }
+    },
+
+    ghqFilterModule := {
+      (m: ModuleID) => true
     }
   )
 
