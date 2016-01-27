@@ -14,13 +14,13 @@ object GhqPlugin extends AutoPlugin {
   import autoImport._
 
   lazy val settings = Seq(
-    ghqGetDependencies <<= (ghqFilterModule, ivyPaths, libraryDependencies, streams) map {
-      (filterModule, ivyPaths, libraryDependencies, s) =>
+    ghqGetDependencies <<= (ghqFilterModule, ivyScala, ivyPaths, libraryDependencies, streams) map {
+      (filterModule, ivyScala, ivyPaths, libraryDependencies, s) =>
         new IvyCache(ivyPaths.ivyHome).withDefaultCache(None, s.log) {
           cache =>
             libraryDependencies.filter(filterModule).foreach {
               m =>
-                GhqAction.downloadModule(cache, m, s.log)
+                GhqAction.downloadModule(cache, m, ivyScala, s.log)
             }
         }
     },

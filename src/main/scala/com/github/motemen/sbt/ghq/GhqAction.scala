@@ -1,6 +1,6 @@
 package com.github.motemen.sbt.ghq
 
-import sbt.{Logger, Process, ModuleID}
+import sbt._
 
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager
 import org.apache.ivy.core.module.id.ModuleRevisionId
@@ -10,8 +10,13 @@ import scala.xml.parsing.ConstructingParser
 import scala.collection.JavaConversions._
 
 object GhqAction {
-  def downloadModule(cache: DefaultRepositoryCacheManager, mod: ModuleID, log: Logger): Unit = {
-    val modRevId = ModuleRevisionId.newInstance(mod.organization, mod.name, mod.revision, mod.extraAttributes)
+  def downloadModule(cache: DefaultRepositoryCacheManager, mod: ModuleID, ivyScala: Option[IvyScala], log: Logger): Unit = {
+    val modRevId = ModuleRevisionId.newInstance(
+      mod.organization,
+      CrossVersion(mod, ivyScala).fold(mod.name)(_(mod.name)),
+      mod.revision,
+      mod.extraAttributes
+    )
 
     val path = cache.getIvyFileInCache(modRevId).getPath
     extractScmUrlFromFile(s"$path.original") match {
