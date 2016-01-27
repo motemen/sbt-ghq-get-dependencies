@@ -26,7 +26,12 @@ object GhqPlugin extends AutoPlugin {
     },
 
     ghqFilterModule := {
-      (m: ModuleID) => true
+      (m: ModuleID) =>
+        m.configurations match {
+          case Some("test") => true
+          case None => true
+          case _ => false
+        }
     }
   )
 
