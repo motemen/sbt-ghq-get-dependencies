@@ -9,15 +9,9 @@ import scala.collection.JavaConversions._
 import scala.xml.parsing.ConstructingParser
 
 object GhqPlugin extends AutoPlugin {
-  lazy val ghqGetDependencies = TaskKey[Unit](
-    "ghq-get-dependencies",
-    """Download dependencies using "ghq get"."""
-  )
+  object autoImport extends GhqKeys
 
-  lazy val ghqFilterModule = SettingKey[ModuleID => Boolean](
-    "ghq-filter-module",
-    "A function to filter which modules are to be downloaded"
-  )
+  import autoImport._
 
   lazy val settings = Seq(
     ghqGetDependencies <<= (ghqFilterModule, ivyPaths, libraryDependencies, streams) map {
